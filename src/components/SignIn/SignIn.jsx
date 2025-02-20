@@ -1,102 +1,81 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Helmet } from "react-helmet";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-// import { AuthContext } from "../../provider/AuthProvider";
+import { Link, useNavigate } from "react-router-dom";
+import ShareGoogle from "../GoogleShare/GoogleShare";
+import { AuthContext } from "../../provider/AuthProvider";
 
-function SignIn() {
-  const [disabled, setDisabled] = useState(false);
+function SignUp() {
   const navigate = useNavigate();
-  const location = useLocation();
-  // const { loginUser } = useContext(AuthContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const from = location.state?.from?.pathname || "/";
+  const { createUser, updateUserProfile } = useContext(AuthContext);
+  
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    loginUser(email, password)
-      .then(() => {
-        toast.success("Login successful!", {
-          autoClose: 2000,
-          hideProgressBar: true,
-        });
-        navigate(from, { replace: true });
-      })
-      .catch((error) => {
-        const errorMsg = error.message.includes("auth")
-          ? "Invalid email or password."
-          : "An error occurred. Please try again.";
-        toast.error(errorMsg, {
-          autoClose: 2000,
-          hideProgressBar: true,
-        });
+  const onSubmit = async (data) => {
+    try {
+      // Creating user with email and password
+      await createUser(data.email, data.password);
+      await updateUserProfile(data.name, data.photoURL);
+      
+      reset();
+      toast.success("Registration successful! Redirecting...", {
+        autoClose: 2000,
+        hideProgressBar: true,
       });
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message, {
+        autoClose: 2000,
+        hideProgressBar: true,
+      });
+    }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen  bg-gray-300">
+    <div className="min-h-screen flex items-center justify-center bg-white">
       <Helmet>
-        <title>Sign In</title>
+        <title>Sign Up</title>
       </Helmet>
-      <div className="w-full max-w-md p-8 space-y-6  dark:shadow bg-white shadow-lg shadow-blue-200 rounded-lg">
-        <h2 className="text-2xl  font-bold text-center text-gray-800">
-          Login to Your Account
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="email"
-              className="block dark:text-white/70 mb-2 text-sm font-medium text-gray-700"
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 text-sm border rounded-lg focus:ring-blue-500 focus:border-blue-500 border-gray-300"
-              placeholder="Enter your email"
-              required
-            />
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-300">
+        <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Create Your Account</h2>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">Name</label>
+            <input {...register("name", { required: true })} type="text" placeholder="Enter your name" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EC7C0E]" />
+            {errors.name && <span className="text-red-500">This field is required</span>}
           </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block mb-2 dark:text-white/70 text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 text-sm border rounded-lg focus:ring-blue-500 focus:border-blue-500 border-gray-300"
-              placeholder="Enter your password"
-              required
-            />
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">Email</label>
+            <input {...register("email", { required: true })} type="email" placeholder="Enter your email" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EC7C0E]" />
+            {errors.email && <span className="text-red-500">This field is required</span>}
           </div>
-          <button
-            type="submit"
-            className="w-full px-4 py-2 text-white bg-[#4946EC] rounded-lg focus:ring-4 focus:ring-blue-300"
-          >
-            Sign in
-          </button>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-semibold mb-2">Photo URL</label>
+            <input {...register("photoURL", { required: true })} type="text" placeholder="Enter your Photo URL" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EC7C0E]" />
+            {errors.photoURL && <span className="text-red-500">This field is required</span>}
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-700 font-semibold mb-2">Password</label>
+            <input {...register("password", { required: true, minLength: 6, maxLength: 20, pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,20}$/ })} type="password" placeholder="Enter your password" className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#EC7C0E]" />
+            {errors.password && <span className="text-red-500">Invalid password format!</span>}
+          </div>
+          <button type="submit" className="w-full bg-[#EC7C0E] text-white py-2 rounded-lg hover:bg-orange-600 transition-all">Sign Up</button>
         </form>
-        {/* Uncomment if needed */}
-        {/* <ShareGoogle /> */}
-        <p className="dark:text-gray-300">
-          Not a member?{" "}
-          <Link className="text-blue-400" to={`/signUp`}>
-            Sign up
-          </Link>
+        <div className="text-center my-4 text-gray-600">Or</div>
+        <ShareGoogle />
+        <p className="text-center mt-4">
+          Already have an account? <Link className="text-[#EC7C0E]" to="/SignIn">Sign in</Link>
         </p>
       </div>
     </div>
   );
 }
 
-export default SignIn;
+export default SignUp;

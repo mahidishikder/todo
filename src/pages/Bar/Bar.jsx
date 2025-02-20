@@ -3,7 +3,7 @@ import { FiGrid, FiClipboard, FiClock, FiCheckCircle } from "react-icons/fi"; //
 
 const Sidebar = () => {
   return (
-    <div className="w-64 h-screen bg-gray-900 text-white p-6 fixed">
+    <div className="w-64 h-screen dark:bg-gray-900  text-white p-6 fixed">
       <h2 className="text-2xl font-bold mb-6 text-center">Task Manager</h2>
       <ul className="space-y-4">
         <li>

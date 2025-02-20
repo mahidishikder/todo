@@ -16,7 +16,7 @@ function DashboardInfo() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Dashboard Overview</h2>
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">Dashboard Overview</h2>
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -28,7 +28,7 @@ function DashboardInfo() {
       </div>
 
       {/* Progress Bar Section */}
-      <div className="mt-8 p-6 bg-white shadow-lg rounded-xl">
+      <div className="mt-8 p-6 bg-white dark:bg-slate-600 shadow-lg rounded-xl">
         <h3 className="text-lg font-semibold mb-4">Task Completion Progress</h3>
         <motion.div
           className="bg-gray-200 h-6 rounded-lg overflow-hidden"

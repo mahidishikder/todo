@@ -1,9 +1,24 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaTachometerAlt, FaTasks, FaList, FaSpinner, FaCheckCircle, FaSignOutAlt } from "react-icons/fa";
 import Navbar from "../../components/Navber";
+import { useContext } from "react";
+import { AuthContext } from "../../provider/AuthProvider";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Dashboard() {
+  const { logOut } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logOut();
+    toast.success("Logout successful!");
+    setTimeout(() => {
+      navigate("/signIn");
+    }, 2000); // Redirect after 2 seconds
+  };
+
   return (
     <div className="flex flex-col lg:flex-row">
       {/* Sidebar */}
@@ -11,7 +26,7 @@ function Dashboard() {
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="lg:fixed lg:left-0 lg:top-0 lg:w-72 lg:h-screen bg-[#2C3E50] text-white shadow-lg flex flex-col lg:overflow-y-auto lg:pr-2 w-full"
+        className="lg:fixed lg:left-0 lg:top-0 lg:w-72 lg:h-screen bg-[#2C3E50] text-white shadow-lg flex flex-col lg:overflow-y-auto lg:pr-2 w-full dark:bg-[#1A242F]"
       >
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mt-2">
@@ -35,8 +50,17 @@ function Dashboard() {
             <DashboardLink to="/todo" icon={<FaList />} label="To-Do" />
             <DashboardLink to="/inprogress" icon={<FaSpinner />} label="In Progress" />
             <DashboardLink to="/completed" icon={<FaCheckCircle />} label="Completed" />
-            <DashboardLink to="/logout" icon={<FaSignOutAlt />} label="Logout" />
           </ul>
+          <div className="divider divider-info my-8">or</div>
+
+          <Link to={`/signIn`}>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-6 py-3 w-full bg-red-500 text-white shadow-lg hover:bg-red-700 transition-all my-2 font-medium"
+            >
+              <FaSignOutAlt /> <span>Logout</span>
+            </button>
+          </Link>
         </div>
       </motion.aside>
 
@@ -46,12 +70,15 @@ function Dashboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white"
+          className="bg-white dark:bg-[#121212] transition-all"
         >
           <Navbar />
           <Outlet />
         </motion.div>
       </main>
+
+      {/* Toast Notification */}
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 }
@@ -61,9 +88,9 @@ function DashboardLink({ to, icon, label }) {
     <li>
       <NavLink
         to={to}
-        end={to === "/dashboard"} // Only match exactly for /dashboard
+        end={to === "/dashboard"}
         className={({ isActive }) =>
-          `flex items-center gap-3 px-6 py-3 hover:rounded-r-full w-full transition-all text my-2 font-medium 
+          `flex items-center gap-3 px-6 py-3 w-full transition-all text my-2 font-medium
           ${isActive ? "bg-[#FF7F00] rounded-r-full text-white shadow-lg" : "hover:bg-[#FF7F00] hover:text-gray-300"}`
         }
       >
