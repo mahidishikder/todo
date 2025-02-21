@@ -40,7 +40,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-300 dark:bg-gray-900 shadow-md p-4 transition-all">
+    <nav className="bg-white shadow-black/30 mb-[2px] dark:bg-gray-900 shadow p-4 transition-all">
       <div className="container mx-auto flex justify-between items-center">
         <h1 className="text-xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
 
