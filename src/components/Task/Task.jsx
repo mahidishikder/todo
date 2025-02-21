@@ -37,7 +37,10 @@ const TaskCard = ({ task, onEdit, onDelete }) => {
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">
           {task.category}
         </span>
-        <p className="italic">{task.createdAt}</p>
+        <div className="mt-4 text-sm text-gray-500">
+                <p>Date: {new Date(task.createdAt).toLocaleDateString()}</p>
+                <p>Time: {new Date(task.createdAt).toLocaleTimeString()}</p>
+              </div>
       </div>
       <div className="mt-4 flex space-x-2">
         <button
